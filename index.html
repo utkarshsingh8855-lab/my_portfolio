@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">UTKARSH<span>.ai</span></div>
@@ -28,7 +28,6 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section id="home" class="hero container">
         <div class="hero-content">
             <div class="hero-text">
@@ -42,14 +41,12 @@
             </div>
             <div class="hero-img">
                 <div class="img-wrapper">
-                    <!-- आपकी इमेज यहाँ बिल्कुल सही लोड होगी -->
                     <img src="utkarsh.jpeg" alt="Utkarsh Singh">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- About Section (Enhanced for European Market) -->
     <section id="about" class="about container">
         <h2 class="section-title">Professional Overview</h2>
         <div class="about-card">
@@ -57,7 +54,6 @@
         </div>
     </section>
 
-    <!-- Technical Stack Section (Structured & Professional) -->
     <section id="skills" class="skills container">
         <h2 class="section-title">Technical Expertise</h2>
         <div class="skills-grid">
@@ -84,12 +80,10 @@
         </div>
     </section>
 
-    <!-- Featured Projects Section (With your new Future-Proof Projects) -->
     <section id="projects" class="projects container">
         <h2 class="section-title">Featured Enterprise Case Studies</h2>
         <div class="project-grid">
             
-            <!-- Project 1: Smart Factory (Audio AI) -->
             <div class="project-box border-highlight">
                 <div class="p-icon"><i class="fas fa-industry"></i></div>
                 <span class="p-status">Under Active Development</span>
@@ -98,7 +92,6 @@
                 <div class="p-tags"><span>Python</span> <span>Librosa</span> <span>CNN Model</span></div>
             </div>
 
-            <!-- Project 2: Private Local AI (GDPR) -->
             <div class="project-box border-highlight">
                 <div class="p-icon"><i class="fas fa-shield-virus"></i></div>
                 <span class="p-status">Under Active Development</span>
@@ -107,7 +100,6 @@
                 <div class="p-tags"><span>Ollama</span> <span>FastAPI</span> <span>Docker</span></div>
             </div>
 
-            <!-- Project 3: Restaurant Success Prediction (Your Original Project) -->
             <div class="project-box">
                 <div class="p-icon"><i class="fas fa-utensils"></i></div>
                 <span class="p-status">Completed</span>
@@ -119,7 +111,6 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
     <section id="contact" class="contact container">
         <h2 class="section-title">Get In Touch</h2>
         <div class="contact-wrapper">
@@ -140,7 +131,6 @@
         </div>
     </section>
 
-    <!-- Gemini AI Chat Assistant (Your awesome feature!) -->
     <div class="ai-chat-container" id="aiChat">
         <div class="chat-header">
             <div class="ai-header-info">
@@ -166,11 +156,109 @@
         <div class="pulse"></div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <p>© 2026 Utkarsh Singh | Optimized for European Tech Integration (DE / UK)</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // Configuration & API Setup
+        const GEMINI_KEY = "AIzaSyBSROwkYwyG0Dzz8-WKSzjak60XYz-fRNA"; 
+        const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+
+        // Custom Corporate System Instructions for Gemini
+        const SYSTEM_INSTRUCTION = `You are the exclusive personal AI Assistant of Utkarsh Singh. 
+        Utkarsh is a highly capable AI/ML Engineering student in his 4th semester (2nd year) at BP Mandal College of Engineering. 
+        His core tech stack includes Python, Scikit-Learn, Pandas, NumPy, FastAPI, Docker, and Librosa for audio signal processing. 
+        His notable projects are:
+        1. 'Smart Factory Predictive Audio-AI' (An Industry 4.0 acoustic anomaly detection system utilizing CNNs and Librosa, highly relevant for the German automotive sector like BMW/Mercedes).
+        2. 'GDPR-Compliant Local Privacy AI' (A decentralized edge architecture deploying offline Large Language Models via Ollama to secure enterprise medical and legal documentation).
+        3. 'Predictive Restaurant Analytics Pipeline' (An end-to-end machine learning solution using Random Forest Regressors with an 89% accuracy metric).
+        His professional objective is to secure an engineering role in Germany or Scotland based purely on his capabilities and proof of work. 
+        Answer all queries professionally, keeping responses concise (2-3 sentences max). Always emphasize Utkarsh's technical excellence and architectural mindset.`;
+
+        // 1. Chat Window Toggle Logic
+        function toggleChat() {
+            const chat = document.getElementById('aiChat');
+            if (chat) {
+                chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
+            }
+        }
+
+        // 2. Send Message to Gemini API Logic
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const body = document.getElementById('chatBody');
+            const status = document.getElementById('aiStatus');
+            
+            if (!input || !body || !status) return;
+
+            const userText = input.value.trim();
+            if (!userText) return;
+
+            // Render user message instantly
+            body.innerHTML += `<div class="user-msg" style="text-align: right; margin: 8px 0; padding: 10px; background: rgba(20, 110, 245, 0.1); border-radius: 8px; color: #fff;">${userText}</div>`;
+            input.value = "";
+            body.scrollTop = body.scrollHeight;
+
+            // Update status to typing
+            status.innerText = "Typing...";
+
+            try {
+                // Fetch request directly to Google API
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [
+                            { role: "user", parts: [{ text: userText }] }
+                        ],
+                        systemInstruction: {
+                            parts: [{ text: SYSTEM_INSTRUCTION }]
+                        },
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 200
+                        }
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    console.error("API Error Response:", data);
+                    throw new Error(data.error ? data.error.message : "API Connection Failed");
+                }
+
+                if (data.candidates && data.candidates[0].content) {
+                    const aiRaw = data.candidates[0].content.parts[0].text;
+                    
+                    // Parse with marked.js if available, else use raw text
+                    const aiFormatted = (typeof marked !== 'undefined') ? marked.parse(aiRaw) : aiRaw;
+                    
+                    body.innerHTML += `<div class="ai-msg" style="text-align: left; margin: 8px 0; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; color: #e2e8f0;">${aiFormatted}</div>`;
+                    status.innerText = "Online";
+                } else {
+                    throw new Error("Invalid response format received.");
+                }
+
+            } catch (error) {
+                console.error("AI Error:", error);
+                status.innerText = "Offline";
+                body.innerHTML += `<div class="ai-msg" style="color: #ef4444; text-align: left; margin: 8px 0; padding: 10px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">System Error: Unable to fetch AI response.</div>`;
+            } finally {
+                body.scrollTop = body.scrollHeight;
+            }
+        }
+
+        // 3. Dark Theme / Simple Toggle Logic (Placeholder for basic operation)
+        document.addEventListener("DOMContentLoaded", () => {
+            const themeBtn = document.getElementById("theme-toggle");
+            if (themeBtn) {
+                themeBtn.addEventListener("click", () => {
+                    document.body.classList.toggle("light-theme");
+                });
+            }
+        });
+    </script>
 </body>
 </html>
